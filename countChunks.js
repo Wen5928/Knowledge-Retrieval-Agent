@@ -1,6 +1,6 @@
 // countChunks.js
 import fs from 'fs/promises';
-import { chunkText } from './utils/chunkText.js';
+import { chunkText } from './lib/chunkText.js';
 
 async function main() {
   const raw = await fs.readFile('./docs.json', 'utf-8');

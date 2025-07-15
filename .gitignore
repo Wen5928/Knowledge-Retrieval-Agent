@@ -5,7 +5,9 @@ node_modules/
 .Vscode
 
 # Environment
+.env.local
 .env
+
 
 # Others
 docs.json
