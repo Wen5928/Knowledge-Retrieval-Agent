@@ -5,18 +5,11 @@ import OpenAI from 'openai';
 import { supabase } from './lib/supabaseClient.js';
 import { getEmbedding } from './lib/embedding.js';
 
-import cors from 'cors';
-// Allow any origin (including chrome-extension://…)
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
+
 
 dotenv.config();
 const prompt = promptSync({ sigint: true });
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-
 
 
 async function main() {
