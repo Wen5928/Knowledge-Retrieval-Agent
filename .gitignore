@@ -1,6 +1,9 @@
 # node 相關
 node_modules/
 
+# Vscode
+.Vscode
+
 # Environment
 .env
 
