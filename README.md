@@ -1,6 +1,6 @@
-# ABConvert Knowledge Retrieval Agent
+# Knowledge Retrieval Agent
 
-A **CLI-based** agent to answer questions about ABConvert by retrieving relevant documentation from a GitBook knowledge base and leveraging OpenAI GPT-4.
+A **CLI-based** agent to answer questions about data (here is ABConvert) by retrieving relevant documentation from resource (here is a GitBook knowledge base) and leveraging OpenAI GPT-4.
 Document of POC: https://hackmd.io/@Lj0D3vwhTzeO2bpuXn3dgQ/Wen
 
 ---
