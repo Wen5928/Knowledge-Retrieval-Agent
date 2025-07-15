@@ -151,12 +151,3 @@ Follow the prompt:
 ❓ Enter your question: What types of A/B tests does ABConvert support?
 🤖 AI’s Answer: ...
 ```
-
-### Test with cURL
-```bash
-curl -v -X POST http://localhost:3000/ask \
-  -H "Content-Type: application/json" \
-  -d '{"question":"How do I set up a price A/B test in my app?"}'
-```
-
-Author: Wen
