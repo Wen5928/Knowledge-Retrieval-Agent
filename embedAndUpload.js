@@ -2,8 +2,8 @@
 import fs from 'fs/promises';
 import dotenv from 'dotenv';
 import { chunkText } from './chunkText.js';           // 根据你的文件结构调整路径
-import { getEmbedding } from './embedding.js';
-import { supabase } from './supabaseClient.js';
+import { getEmbedding } from './lib/embedding.js';
+import { supabase } from './lib/supabaseClient.js';
 
 dotenv.config();  // 确保环境变量已加载
 

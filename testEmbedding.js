@@ -1,6 +1,6 @@
 // testEmbedding.js
 import dotenv from 'dotenv';
-import { getEmbedding } from './embedding.js';
+import { getEmbedding } from './lib/embedding.js';
 
 dotenv.config();
 

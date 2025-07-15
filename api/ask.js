@@ -1,20 +1,15 @@
 // api/ask.js
+
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import { getEmbedding } from '../lib/embedding.js';
+import { supabase } from '../lib/supabaseClient.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
 res.setHeader('Access-Control-Allow-Origin', '*');
 res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-
-// Initialize Supabase using service_role key (bypasses RLS)
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
