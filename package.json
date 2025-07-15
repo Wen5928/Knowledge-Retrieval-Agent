@@ -1,15 +1,19 @@
 {
   "name": "abconvert-agent",
   "version": "1.0.0",
-+ "type": "module",
+  "type": "module",
   "scripts": {
-    "dev": "vercel dev"
+    "dev": "vercel dev",
+    "crawl": "node crawlGitbook.js",
+    "embed": "node embedAndUpload.js",
+    "start": "node askAgent.js"
   },
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "openai": "^4.0.0",
-    "@supabase/supabase-js": "^2.0.0"
+    "@supabase/supabase-js": "^2.0.0",
+    "prompt-sync": "^4.2.0"
   }
 }
