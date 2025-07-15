@@ -58,43 +58,52 @@ export default async function handler(req, res) {
 
     // 4. Few-shot + retrieval prompt
     const messages = [
-      {
+        {
         role: 'system',
         content:`
-          You are ABConvert’s expert assistant.
-          Use the provided documentation snippets to answer the user’s question accurately and concisely.\n
+            You are ABConvert’s expert assistant.
+            Use the provided documentation snippets to answer the user’s question accurately and concisely.\n
 
-          When you reply:
-          1. Cite the source URL in square brackets, e.g. [Source: https://abconvert.gitbook.io/...]
-          2. If you cannot find an answer, say: “I’m sorry, I don’t have that information right now.”
-          3. Use bullet points or numbered lists when it helps readability.
-          4. Give direct steps to teach user how to build up their questions
-          Documentation snippets:"""${context}"""
-          `
-      },
+            When you reply:
+            1. Cite the source URL in square brackets, e.g. [Source: https://abconvert.gitbook.io/...]
+            2. If you cannot find an answer, say: “I’m sorry, I don’t have that information right now.”
+            3. Use bullet points or numbered lists when it helps readability.
+            4. Give direct steps to teach user how to build up their questions.
+            Documentation snippets:"""${context}"""
+        `
+        },
 
       // —— Few-shot example #1 ——
         {
         role: 'user',
-        content: `Documentation snippets:
-        Source: https://abconvert.gitbook.io/.../pricing-tests
-        ABConvert supports two pricing tests:
-        - A vs B price
-        - Discount-code vs no-code
+        content: `
+            Documentation snippets:
+            Source: https://abconvert.gitbook.io/.../pricing-tests
+            ABConvert supports two pricing tests:
+            - A vs B price
+            - Discount-code vs no-code
 
-        User question: What pricing tests can I run?`
-            },
-            {
-            role: 'assistant',
-            content: `• A vs B price point tests  
-        • Coupon vs no-coupon tests  
-        [Source: https://abconvert.gitbook.io/.../pricing-tests]`
-            },
+            User question: What pricing tests can I run?
+        `
+        },
+        {
+        role: 'assistant',
+        content: `
+             **A vs B price point tests**  
+                **Why run it:** To measure price sensitivity—find the sweet spot that maximizes both conversion rate and revenue per user. 
+                By showing half your visitors Price A and half Price B, you learn which price drives higher overall profit.  
+
+            **Coupon vs no-coupon tests**  
+                **Why run it:** To gauge the real lift from discounts versus standard pricing. 
+                Coupons can boost conversion but may erode margins—this test quantifies that trade-off so you can decide if the incremental sales justify the discount cost.    
+            [Source: https://abconvert.gitbook.io/.../pricing-tests]
+        `
+        },
 
         // —— Few-shot example #2 ——
         {
-          role: 'user',
-          content: `Documentation snippets:
+            role: 'user',
+            content: `Documentation snippets:
             Source: https://abconvert.gitbook.io/.../theme-tests
             You can test different page layouts:
             - Hero image on top vs bottom
@@ -104,9 +113,14 @@ export default async function handler(req, res) {
         },
 
         {
-          role: 'assistant',
-          content: `• Swap hero positions (top vs bottom)  
-            • A/B test button colors (green vs blue)  
+            role: 'assistant',
+            content: `
+            • **Swap hero positions (top vs bottom)**  
+                **Why run it:** To identify which placement immediately captures user attention and encourages scrolling. Top placement may boost visibility of the main offer, while bottom placement can reduce perceived clutter and improve mobile usability.  
+
+            • **A/B test button colors (green vs blue)**  
+                **Why run it:** Button color impacts click-through by affecting contrast, emotional response, and trust. Green often signals “go” and positivity, whereas blue conveys stability—this test quantifies which color maximizes conversions for your audience.  
+
             [Source: https://abconvert.gitbook.io/.../theme-tests]`
         },
 

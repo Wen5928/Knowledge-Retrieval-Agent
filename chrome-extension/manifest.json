@@ -8,9 +8,6 @@
     "https://knowledge-retrieval-agent.vercel.app/*"
   ],
   "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "128": "icon.png"
-    }
+    "default_popup": "popup.html"
   }
 }
