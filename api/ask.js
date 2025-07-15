@@ -3,13 +3,9 @@
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import { getEmbedding } from '../lib/embedding.js';
-import { supabase } from '../lib/supabaseClient.js';
 import dotenv from 'dotenv';
-dotenv.config();
 
-res.setHeader('Access-Control-Allow-Origin', '*');
-res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+dotenv.config();
 
 // Initialize Supabase (service_role key bypasses RLS)
 const supabase = createClient(
@@ -21,12 +17,13 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export default async function handler(req, res) {
     // 1) CORS preflight support
-  if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    return res.status(200).end();
-  }
+    if (req.method === 'OPTIONS') {
+    
+        return res.status(200).end();
+    }
 
   if (req.method !== 'POST'){
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -113,30 +110,29 @@ export default async function handler(req, res) {
             [Source: https://abconvert.gitbook.io/.../theme-tests]`
         },
 
-      {
-        role: 'user',
-        content: `
-        Documentation snippets:\n${context}\n\n
-        
-        User question: ${question}
- 
-        `
-      },
-    ];
+        {
+            role: 'user',
+            content: `
+            Documentation snippets:\n${context}\n\n
+            
+            User question: ${question}
+    
+            `
+        },
+        ];
 
-    // 7) Ask GPT-4
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages
-    });
+        // 7) Ask GPT-4
+        const completion = await openai.chat.completions.create({
+        model: 'gpt-4',
+        messages
+        });
 
-    const answer = completion.choices[0].message.content.trim();
+        const answer = completion.choices[0].message.content.trim();
 
-    // 8) Send back JSON
-    return res.json({ answer });
+        // 8) Send back JSON
+        return res.json({ answer });
 
-    } //try's } 
-
+    } 
     catch (err) {
         console.error('🔥 ask.js error:', err);
         return res.status(500).json({
