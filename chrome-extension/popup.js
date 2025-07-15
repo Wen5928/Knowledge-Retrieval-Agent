@@ -1,3 +1,4 @@
+const API_URL = 'https://knowledge-retrieval-agent.vercel.app/api/ask';
 document.getElementById('ask').addEventListener('click', async () => {
   const qEl = document.getElementById('question');
   const answerEl = document.getElementById('answer');
@@ -6,7 +7,7 @@ document.getElementById('ask').addEventListener('click', async () => {
 
   answerEl.textContent = '⏳ Thinking…';
   try {
-    const res = await fetch('http://localhost:3000/ask', {
+    const res = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ question })

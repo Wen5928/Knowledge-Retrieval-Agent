@@ -5,6 +5,11 @@ import { getEmbedding } from '../lib/embedding.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
+res.setHeader('Access-Control-Allow-Origin', '*');
+res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+
 // Initialize Supabase using service_role key (bypasses RLS)
 const supabase = createClient(
   process.env.SUPABASE_URL,
