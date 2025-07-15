@@ -1,91 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ABConvert Knowledge CLI</title>
+  <meta charset="UTF-8"/>
+  <title>ABConvert QA</title>
   <style>
-    body {
-      background: #000;
-      color: #0f0;
-      font-family: monospace;
-      margin: 0;
-      padding: 20px;
-    }
-    #terminal {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    #prompt-line {
-      display: flex;
-      align-items: center;
-    }
-    #prompt-line span {
-      margin-right: 8px;
-    }
-    #question {
-      background: #000;
-      color: #0f0;
-      border: none;
-      outline: none;
-      flex: 1;
-      font-family: monospace;
-      font-size: 1rem;
-    }
-    #ask {
-      background: #111;
-      color: #0f0;
-      border: 1px solid #0f0;
-      padding: 0.5em 1em;
-      cursor: pointer;
-      margin-left: 8px;
-      font-family: monospace;
-    }
-    #output {
-      white-space: pre-wrap;
-      margin-top: 1em;
-      border-top: 1px solid #0f0;
-      padding-top: 1em;
-    }
+    body { font-family: sans-serif; padding: 2rem; }
+    #answer { margin-top: 1rem; white-space: pre-wrap; }
   </style>
 </head>
 <body>
-  <div id="terminal">
-    <div id="prompt-line">
-      <span>❓</span>
-      <input id="question" type="text" placeholder="Enter your question..." />
-      <button id="ask">Ask</button>
-    </div>
-    <div id="output"></div>
-  </div>
+  <h1>Ask ABConvert</h1>
 
+  <!-- 1) Question input -->
+  <form id="askForm">
+    <input
+      id="question"
+      type="text"
+      placeholder="How do I set up a price A/B test?"
+      style="width: 80%; padding: .5em;"
+    />
+    <button type="submit" style="padding: .5em 1em;">Ask</button>
+  </form>
+
+  <!-- 2) Where we’ll put the answer -->
+  <div id="answer"></div>
+
+  <!-- 3) Script that calls your JSON API and displays the text -->
   <script>
-    document.getElementById('ask').addEventListener('click', async () => {
-      const input = document.getElementById('question');
-      const output = document.getElementById('output');
-      const question = input.value.trim();
-      if (!question) return;
+    const form     = document.getElementById('askForm');
+    const input    = document.getElementById('question');
+    const answerEl = document.getElementById('answer');
 
-      output.textContent = '⏳ Thinking...';
+    form.addEventListener('submit', async e => {
+      e.preventDefault();                // don’t reload the page
+      const q = input.value.trim();
+      if (!q) return;
+
+      answerEl.textContent = '⏳ Thinking…';
 
       try {
-        const res = await fetch('/ask', {
+        // call your deployed endpoint
+        const res = await fetch('/api/ask', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question })
+          body: JSON.stringify({ question: q })
         });
-        const json = await res.json();
-        output.textContent = json.answer || json.error;
-      } catch (err) {
-        output.textContent = '❌ ' + err.message;
-      }
-    });
 
-    // Allow Enter key to submit
-    document.getElementById('question').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        document.getElementById('ask').click();
+        if (!res.ok) {
+          // show raw text if it’s an error
+          const txt = await res.text();
+          answerEl.textContent = '❌ ' + txt;
+          return;
+        }
+
+        // parse the JSON and extract the answer field
+        const { answer, error } = await res.json();
+        answerEl.textContent = answer ?? '❌ ' + error;
+      } catch (err) {
+        answerEl.textContent = '❌ ' + err.message;
       }
     });
   </script>
