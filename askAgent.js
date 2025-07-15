@@ -1,13 +1,23 @@
-// askAgentCli.js
+// askAgent.js
 import dotenv from 'dotenv';
 import promptSync from 'prompt-sync';
 import OpenAI from 'openai';
 import { supabase } from './supabaseClient.js';
 import { getEmbedding } from './embedding.js';
 
+import cors from 'cors';
+// Allow any origin (including chrome-extension://…)
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
+
 dotenv.config();
 const prompt = promptSync({ sigint: true });
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+
+
 
 async function main() {
   console.log('\n🟢 ABConvert Knowledge CLI\n');
@@ -47,12 +57,63 @@ async function main() {
     const messages = [
       {
         role: 'system',
-        content:
-          "You are ABConvert’s expert assistant. Use the provided documentation snippets to answer the user’s question accurately. Cite the source URL when possible.",
+        content:`
+          You are ABConvert’s expert assistant.
+          Use the provided documentation snippets to answer the user’s question accurately and concisely.\n
+
+          When you reply:
+          1. Cite the source URL in square brackets, e.g. [Source: https://abconvert.gitbook.io/...]
+          2. If you cannot find an answer, say: “I’m sorry, I don’t have that information right now.”
+          3. Use bullet points or numbered lists when it helps readability.
+          4. Give direct steps to teach user how to build up their questions
+          Documentation snippets:"""${context}"""
+          `
       },
+
+      // —— Few-shot example #1 ——
+  {
+    role: 'user',
+    content: `Documentation snippets:
+      Source: https://abconvert.gitbook.io/.../pricing-tests
+      ABConvert supports two pricing tests:
+      - A vs B price
+      - Discount-code vs no-code
+
+      User question: What pricing tests can I run?`
+        },
+        {
+          role: 'assistant',
+          content: `• A vs B price point tests  
+      • Coupon vs no-coupon tests  
+      [Source: https://abconvert.gitbook.io/.../pricing-tests]`
+        },
+
+        // —— Few-shot example #2 ——
+        {
+          role: 'user',
+          content: `Documentation snippets:
+      Source: https://abconvert.gitbook.io/.../theme-tests
+      You can test different page layouts:
+      - Hero image on top vs bottom
+      - Button color green vs blue
+
+      User question: How do I test page design?`
+        },
+        {
+          role: 'assistant',
+          content: `• Swap hero positions (top vs bottom)  
+      • A/B test button colors (green vs blue)  
+      [Source: https://abconvert.gitbook.io/.../theme-tests]`
+        },
+
       {
         role: 'user',
-        content: `Documentation snippets:\n${context}\n\nUser question: ${question}`,
+        content: `
+        Documentation snippets:\n${context}\n\n
+        
+        User question: ${question}
+ 
+        `
       },
     ];
 

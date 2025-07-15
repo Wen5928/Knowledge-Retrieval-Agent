@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "ABConvert QA",
+  "version": "1.0.0",
+  "description": "Ask ABConvert questions from your browser toolbar",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "http://localhost:3000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "128": "icon.png"
+    }
+  }
+}
