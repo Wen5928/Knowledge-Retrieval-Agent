@@ -4,8 +4,11 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "crawl": "node crawlGitbook.js",
+    "embed": "node embedAndUpload.js",
+    "start": "node askAgent.js"
   },
+
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",
     "axios": "^1.6.0",
