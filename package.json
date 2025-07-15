@@ -1,13 +1,15 @@
 {
   "name": "abconvert-agent",
   "version": "1.0.0",
-  "private": true,
++ "type": "module",
   "scripts": {
     "dev": "vercel dev"
   },
   "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
     "openai": "^4.0.0",
-    "@supabase/supabase-js": "^2.0.0",
-    "dotenv": "^16.0.0"
+    "@supabase/supabase-js": "^2.0.0"
   }
 }
