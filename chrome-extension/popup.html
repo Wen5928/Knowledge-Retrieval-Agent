@@ -1,17 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <title>ABConvert QA</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      width: 300px;
+      font-family: monospace;
+      margin: 0;
+      padding: 12px;
+      background: #000;
+      color: #0f0;
+    }
+    #prompt-line {
+      display: flex;
+      margin-bottom: 8px;
+    }
+    #prompt-line span {
+      margin-right: 4px;
+    }
+    #question {
+      flex: 1;
+      background: #000;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 4px;
+    }
+    #ask {
+      margin-left: 4px;
+      background: #111;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+    #answer {
+      white-space: pre-wrap;
+      margin-top: 12px;
+      border-top: 1px solid #0f0;
+      padding-top: 8px;
+      min-height: 40px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>ABConvert Expert</h1>
-    <textarea id="question" placeholder="Type your question…" rows="3"></textarea>
+  <div id="prompt-line">
+    <span>❓</span>
+    <input id="question" type="text" placeholder="Your question…" />
     <button id="ask">Ask</button>
-    <pre id="answer"></pre>
   </div>
+  <div id="answer"></div>
+
   <script src="popup.js"></script>
 </body>
 </html>
