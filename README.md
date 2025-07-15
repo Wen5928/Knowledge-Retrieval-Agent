@@ -158,3 +158,5 @@ curl -v -X POST http://localhost:3000/ask \
   -H "Content-Type: application/json" \
   -d '{"question":"How do I set up a price A/B test in my app?"}'
 ```
+
+Author: Wen
