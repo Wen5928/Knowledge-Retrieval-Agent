@@ -1,0 +1,8 @@
+# node 相關
+node_modules/
+
+# Environment
+.env
+
+# Others
+docs.json

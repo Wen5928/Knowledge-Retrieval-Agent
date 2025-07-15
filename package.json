@@ -1,0 +1,17 @@
+{
+  "name": "abconvert-knowledge-agent",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "openai": "^4.0.0",
+    "prompt-sync": "^4.2.0"
+  }
+}
