@@ -71,6 +71,7 @@ export default async function handler(req, res) {
             2. If you cannot find an answer, say: “I’m sorry, I don’t have that information right now.”
             3. Use bullet points or numbered lists when it helps readability.
             4. Give direct steps to teach user how to build up their questions.
+            5. If the question is completely unrelated to our company, reply briefly and let them know it doesn’t seem relevant to ABConvert.
             Documentation snippets:"""${context}"""
         `
         },
