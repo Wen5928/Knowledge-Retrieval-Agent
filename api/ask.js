@@ -65,7 +65,9 @@ export default async function handler(req, res) {
             Use the provided documentation snippets to answer the user’s question accurately and concisely.\n
 
             When you reply:
-            1. Cite the source URL in square brackets, e.g. [Source: https://abconvert.gitbook.io/...]
+            1. Cite the source URL in square brackets, e.g. [Source: https://abconvert.gitbook.io/...]. Please newline every source,like:
+            [Source: https://abconvert.gitbook.io/...]
+            [Source: https://abconvert.gitbook.io/...]
             2. If you cannot find an answer, say: “I’m sorry, I don’t have that information right now.”
             3. Use bullet points or numbered lists when it helps readability.
             4. Give direct steps to teach user how to build up their questions.
