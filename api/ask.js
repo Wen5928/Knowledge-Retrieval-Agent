@@ -9,15 +9,35 @@ dotenv.config();
 
 res.setHeader('Access-Control-Allow-Origin', '*');
 res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+// Initialize Supabase (service_role key bypasses RLS)
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
+    // 1) CORS preflight support
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST'){
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   const { question } = req.body;
-  if (!question) return res.status(400).json({ error: 'Missing question' });
+  if (!question || !question.trim()) {
+    return res.status(400).json({ error: 'Missing "question" in request body' });
+  }
 
   try {
     // 1. Embed the question
@@ -43,36 +63,84 @@ export default async function handler(req, res) {
     const messages = [
       {
         role: 'system',
+        content:`
+          You are ABConvert’s expert assistant.
+          Use the provided documentation snippets to answer the user’s question accurately and concisely.\n
+
+          When you reply:
+          1. Cite the source URL in square brackets, e.g. [Source: https://abconvert.gitbook.io/...]
+          2. If you cannot find an answer, say: “I’m sorry, I don’t have that information right now.”
+          3. Use bullet points or numbered lists when it helps readability.
+          4. Give direct steps to teach user how to build up their questions
+          Documentation snippets:"""${context}"""
+          `
+      },
+
+      // —— Few-shot example #1 ——
+        {
+        role: 'user',
+        content: `Documentation snippets:
+        Source: https://abconvert.gitbook.io/.../pricing-tests
+        ABConvert supports two pricing tests:
+        - A vs B price
+        - Discount-code vs no-code
+
+        User question: What pricing tests can I run?`
+            },
+            {
+            role: 'assistant',
+            content: `• A vs B price point tests  
+        • Coupon vs no-coupon tests  
+        [Source: https://abconvert.gitbook.io/.../pricing-tests]`
+            },
+
+        // —— Few-shot example #2 ——
+        {
+          role: 'user',
+          content: `Documentation snippets:
+            Source: https://abconvert.gitbook.io/.../theme-tests
+            You can test different page layouts:
+            - Hero image on top vs bottom
+            - Button color green vs blue
+
+            User question: How do I test page design?`
+        },
+
+        {
+          role: 'assistant',
+          content: `• Swap hero positions (top vs bottom)  
+            • A/B test button colors (green vs blue)  
+            [Source: https://abconvert.gitbook.io/.../theme-tests]`
+        },
+
+      {
+        role: 'user',
         content: `
-You are ABConvert’s expert assistant.
-Use the documentation snippets to answer succinctly and cite sources.
-
-Example:
-Documentation snippets:
-Source: https://.../pricing-tests
-- A vs B price
-User question: What pricing tests can I run?
-Assistant:
-• A vs B price tests
-[Source: https://.../pricing-tests]
-
-Now you:
-Documentation snippets:
-${context}
-
-User question: ${question}`
-      }
+        Documentation snippets:\n${context}\n\n
+        
+        User question: ${question}
+ 
+        `
+      },
     ];
 
-    const chat = await openai.chat.completions.create({
+    // 7) Ask GPT-4
+    const completion = await openai.chat.completions.create({
       model: 'gpt-4',
       messages
     });
 
-    const answer = chat.choices[0].message.content.trim();
-    res.json({ answer });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
+    const answer = completion.choices[0].message.content.trim();
+
+    // 8) Send back JSON
+    return res.json({ answer });
+
+    } //try's } 
+
+    catch (err) {
+        console.error('🔥 ask.js error:', err);
+        return res.status(500).json({
+            error: err.message || 'Internal Server Error'
+        });
+    }
 }
