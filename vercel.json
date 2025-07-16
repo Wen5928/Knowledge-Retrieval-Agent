@@ -1,0 +1,25 @@
+// vercel.json
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "public",
+  "builds": [
+    // 1) Any file in /api becomes a Serverless Function
+    { "src": "api/**/*.js",     "use": "@vercel/node" },
+
+    // 2) Your fetch/embed scripts can be invoked via the /api/refresh function
+    //    (you don’t need to build them statically)
+    //    You can omit them here if you only run them via GitHub Actions or Cron.
+
+    // 3) Everything in public/ is served statically
+    { "src": "public/**",        "use": "@vercel/static" }
+  ],
+  "routes": [
+    // Route all /api/* to your functions
+    { "src": "/api/(.*)",        "dest": "/api/$1.js" },
+
+    // Serve your single-page UI
+    { "src": "/",                "dest": "/public/index.html" },
+    { "src": "/(.*)",            "dest": "/public/$1" }
+  ]
+}
