@@ -4,8 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "vercel dev",
-    "crawl": "node crawlGitbook.js",
+    "fetch": "node fetchAndCrawl.js",
     "embed": "node embedAndUpload.js",
+    "build": "npm run fetch && npm run embed && next build", 
     "start": "node askAgent.js"
   },
   "dependencies": {

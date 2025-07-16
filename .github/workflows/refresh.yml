@@ -1,0 +1,25 @@
+# .github/workflows/refresh.yml
+name: Refresh Docs
+
+on:
+  schedule:
+    - cron: '0 0 * * 1' # every Monday
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install deps
+        run: npm ci
+      - name: Fetch & embed
+        run: |
+          npm run fetch
+          npm run embed
+      - name: Commit docs.json
+        run: |
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add docs.json
+          git commit -m "chore: refresh docs" || echo "no changes"
+          git push
