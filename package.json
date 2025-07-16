@@ -6,15 +6,17 @@
     "dev": "vercel dev",
     "fetch": "node fetchAndCrawl.js",
     "embed": "node embedAndUpload.js",
-    "build": "npm run fetch && npm run embed", 
+    "build": "npm run fetch && npm run embed",
     "start": "node askAgent.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
+    "@supabase/supabase-js": "^2.0.0",
+    "axios": "^1.10.0",
+    "cheerio": "^1.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
+    "express": "^4.18.2",
     "openai": "^4.0.0",
-    "@supabase/supabase-js": "^2.0.0",
     "prompt-sync": "^4.2.0"
   }
 }
