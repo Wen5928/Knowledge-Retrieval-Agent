@@ -6,7 +6,7 @@
     "dev": "vercel dev",
     "fetch": "node fetchAndCrawl.js",
     "embed": "node embedAndUpload.js",
-    "build": "npm run fetch && npm run embed && next build", 
+    "build": "npm run fetch && npm run embed", 
     "start": "node askAgent.js"
   },
   "dependencies": {
