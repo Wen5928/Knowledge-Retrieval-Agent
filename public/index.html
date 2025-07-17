@@ -100,19 +100,34 @@
     }
 
     // Submit feedback handler
-    subBtn.addEventListener('click', () => {
-      if (!ratings.accuracy || !ratings.helpfulness) {
-        msgEl.style.color = 'red';
-        msgEl.textContent = 'Please rate both fields before submitting.';
-        return;
-      }
-      // TODO: POST ratings to your feedback API endpoint
-      console.log('Feedback:', ratings);
+    subBtn.addEventListener('click', async () => {
+    if (!ratings.accuracy || !ratings.helpfulness) {
+      msgEl.style.color = 'red';
+      msgEl.textContent = 'Please rate both fields.';
+      return;
+    }
+
+    const payload = {
+      question: qEl.value.trim(),
+      accuracy: ratings.accuracy,
+      helpfulness: ratings.helpfulness
+    };
+
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
       msgEl.style.color = 'green';
       msgEl.textContent = 'Thanks for your feedback!';
-      // Optionally hide or reset:
-      // fbEl.style.display = 'none';
-    });
+    } else {
+      const err = await res.json();
+      msgEl.style.color = 'red';
+      msgEl.textContent = `Error: ${err.error}`;
+    }
+  });
 
     // Main ask handler
     form.addEventListener('submit', async e => {

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Feedback Dashboard</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    .stat { margin-bottom: 1em; font-size: 1.2em; }
+  </style>
+</head>
+<body>
+  <h1>Feedback Dashboard</h1>
+  <div class="stat">Average Accuracy: <span id="avg-acc">–</span></div>
+  <div class="stat">Average Helpfulness: <span id="avg-hlp">–</span></div>
+  <div class="stat">Total Responses: <span id="total">–</span></div>
+
+  <script>
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/feedback-stats');
+        const { avg_accuracy, avg_helpfulness, total_responses } = await res.json();
+        document.getElementById('avg-acc').textContent = avg_accuracy;
+        document.getElementById('avg-hlp').textContent = avg_helpfulness;
+        document.getElementById('total').textContent = total_responses;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    loadStats();
+  </script>
+</body>
+</html>
