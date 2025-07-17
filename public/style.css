@@ -1,0 +1,27 @@
+.feedback-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5em;
+}
+.feedback-row label {
+  width: 100px;
+}
+.rating {
+  display: flex;
+}
+.rating button {
+  flex: 1;
+  margin: 0 2px;
+  padding: 4px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+}
+.rating button.selected {
+  background: #0070f3;
+  color: white;
+  border-color: #005bb5;
+}
+#submit-feedback {
+  padding: 6px 12px;
+}
