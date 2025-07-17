@@ -68,38 +68,47 @@ async function doAsk(event) {
 }
 
 // Handle feedback submission
+// Handle feedback submission
 async function submitFeedback() {
+  // 1) Validate
   if (!ratings.accuracy || !ratings.helpfulness) {
     msgEl.style.color = 'red';
     msgEl.textContent = 'Please rate both fields before submitting.';
     return;
   }
 
-  const payload = {
-    question: qEl.value.trim(),
-    accuracy: ratings.accuracy,
-    helpfulness: ratings.helpfulness
-  };
+  // 2) Show “submitting” state
+  msgEl.style.color = 'blue';
+  msgEl.textContent = `Submitting feedback… (Q="${qEl.value.trim()}", accuracy=${ratings.accuracy}, helpfulness=${ratings.helpfulness})`;
 
+  // 3) Send to backend
   try {
     const res = await fetch('/api/feedback', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        question: qEl.value.trim(),
+        accuracy: ratings.accuracy,
+        helpfulness: ratings.helpfulness
+      })
     });
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.error || res.statusText);
-    }
-    msgEl.style.color = 'green';
-    msgEl.textContent = 'Thanks for your feedback!';
-  } catch (e) {
-    msgEl.style.color = 'red';
-    msgEl.textContent = 'Error: ' + e.message;
-  }
 
-  console.log('Submitting feedback', ratings, qEl.value.trim());
+    if (!res.ok) {
+      // get any error message from JSON
+      const { error } = await res.json();
+      throw new Error(error || res.statusText);
+    }
+
+    // 4a) Success
+    msgEl.style.color = 'green';
+    msgEl.textContent = '✅ Thanks for your feedback!';
+  } catch (e) {
+    // 4b) Error
+    msgEl.style.color = 'red';
+    msgEl.textContent = '❌ Error submitting feedback: ' + e.message;
+  }
 }
+
 
 // Event listeners
 form.addEventListener('submit', doAsk);
