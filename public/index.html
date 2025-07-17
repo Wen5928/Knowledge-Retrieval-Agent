@@ -6,6 +6,27 @@
   <style>
     body { font-family: sans-serif; padding: 2rem; }
     #answer { margin-top: 1rem; white-space: pre-wrap; }
+    .feedback-row { display: flex; align-items: center; margin-bottom: .5em; }
+    .feedback-row label { width: 120px; }
+    .rating { display: flex; }
+    .rating button {
+      flex: 1;
+      margin: 0 2px;
+      padding: 4px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+    }
+    .rating button.selected {
+      background: #0070f3;
+      color: #fff;
+      border-color: #005bb5;
+    }
+    #submit-feedback {
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    #feedback-message { margin-top: .5em; }
   </style>
 </head>
 <body>
@@ -25,44 +46,7 @@
   <!-- 2) Where we’ll put the answer -->
   <div id="answer"></div>
 
-  <!-- 3) Script that calls your JSON API and displays the text -->
-  <script>
-    const form     = document.getElementById('askForm');
-    const input    = document.getElementById('question');
-    const answerEl = document.getElementById('answer');
-
-    form.addEventListener('submit', async e => {
-      e.preventDefault();                // don’t reload the page
-      const q = input.value.trim();
-      if (!q) return;
-
-      answerEl.textContent = '⏳ Thinking…';
-
-      try {
-        // call your deployed endpoint
-        const res = await fetch('/api/ask', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question: q })
-        });
-
-        if (!res.ok) {
-          // show raw text if it’s an error
-          const txt = await res.text();
-          answerEl.textContent = '❌ ' + txt;
-          return;
-        }
-
-        // parse the JSON and extract the answer field
-        const { answer, error } = await res.json();
-        answerEl.textContent = answer ?? '❌ ' + error;
-      } catch (err) {
-        answerEl.textContent = '❌ ' + err.message;
-      }
-    });
-  </script>
-
-    <!-- Feedback section -->
+  <!-- 3) Feedback section (hidden until after answer) -->
   <div id="feedback" style="display:none; margin-top: 1em;">
     <div class="feedback-row">
       <label for="accuracy-rating">Accuracy:</label>
@@ -73,8 +57,90 @@
       <div id="helpfulness-rating" class="rating"></div>
     </div>
     <button id="submit-feedback">Submit Feedback</button>
-    <div id="feedback-message" style="margin-top:0.5em;color:green;"></div>
+    <div id="feedback-message"></div>
   </div>
 
+  <script>
+    const API_URL = '/api/ask';
+    const form    = document.getElementById('askForm');
+    const qEl     = document.getElementById('question');
+    const answerEl= document.getElementById('answer');
+    const fbEl    = document.getElementById('feedback');
+    const accEl   = document.getElementById('accuracy-rating');
+    const hlpEl   = document.getElementById('helpfulness-rating');
+    const subBtn  = document.getElementById('submit-feedback');
+    const msgEl   = document.getElementById('feedback-message');
+
+    // Store ratings
+    const ratings = { accuracy: 0, helpfulness: 0 };
+
+    // Render 1–10 buttons for a given container and key
+    function renderRating(container, key) {
+      container.innerHTML = '';
+      for (let i = 1; i <= 10; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.addEventListener('click', () => {
+          ratings[key] = i;
+          // highlight selected
+          Array.from(container.children).forEach((b, idx) => {
+            b.classList.toggle('selected', idx + 1 === i);
+          });
+        });
+        container.appendChild(btn);
+      }
+    }
+
+    // Show feedback UI after answer
+    function showFeedback() {
+      renderRating(accEl, 'accuracy');
+      renderRating(hlpEl, 'helpfulness');
+      msgEl.textContent = '';
+      fbEl.style.display = 'block';
+    }
+
+    // Submit feedback handler
+    subBtn.addEventListener('click', () => {
+      if (!ratings.accuracy || !ratings.helpfulness) {
+        msgEl.style.color = 'red';
+        msgEl.textContent = 'Please rate both fields before submitting.';
+        return;
+      }
+      // TODO: POST ratings to your feedback API endpoint
+      console.log('Feedback:', ratings);
+      msgEl.style.color = 'green';
+      msgEl.textContent = 'Thanks for your feedback!';
+      // Optionally hide or reset:
+      // fbEl.style.display = 'none';
+    });
+
+    // Main ask handler
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const question = qEl.value.trim();
+      if (!question) return;
+
+      answerEl.textContent = '⏳ Thinking…';
+      fbEl.style.display = 'none';
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question })
+        });
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(txt);
+        }
+        const { answer, error } = await res.json();
+        if (error) throw new Error(error);
+        answerEl.textContent = answer;
+        showFeedback();
+      } catch (err) {
+        answerEl.textContent = '❌ ' + err.message;
+      }
+    });
+  </script>
 </body>
 </html>
